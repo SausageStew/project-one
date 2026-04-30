@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Calculator</title>
+    <style>
+        :root {
+            --bg-color: #000000;
+            --btn-gray: #333333;
+            --btn-light: #a5a5a5;
+            --btn-orange: #ff9f0a;
+            --text-white: #ffffff;
+            --text-black: #000000;
+        }
+
+        body {
+            background-color: #222;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        /* 계산기 본체 (스마트폰 형태) */
+        .calculator {
+            background-color: var(--bg-color);
+            width: 340px;
+            height: 600px;
+            border-radius: 40px;
+            padding: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            position: relative;
+            overflow: hidden;
+            border: 8px solid #333;
+        }
+
+        /* 디스플레이 영역 */
+        .display {
+            color: var(--text-white);
+            text-align: right;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .display .history {
+            font-size: 1.2rem;
+            color: #888;
+            height: 1.5rem;
+            margin-bottom: 5px;
+            word-wrap: break-word;
+        }
+
+        .display .current {
+            font-size: 3.5rem;
+            font-weight: 300;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        /* 버튼 그리드 */
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        button {
+            aspect-ratio: 1 / 1;
+            border-radius: 50%;
+            border: none;
+            font-size: 1.6rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: transform 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            outline: none;
+        }
+
+        /* 통통 튀는 애니메이션 */
+        button:active {
+            transform: scale(0.85);
+        }
+
+        /* 색상 테마 */
+        .btn-num { background-color: var(--btn-gray); color: var(--text-white); }
+        .btn-op { background-color: var(--btn-orange); color: var(--text-white); font-size: 2rem; }
+        .btn-func { background-color: var(--btn-light); color: var(--text-black); }
+        
+        .btn-zero {
+            grid-column: span 1; /* 삼성 스타일은 0이 일반 버튼 크기인 경우가 많음 */
+        }
+
+        /* 연산자 활성화 표시 */
+        button.active-op {
+            background-color: white;
+            color: var(--btn-orange);
+        }
+    </style>
+</head>
+<body>
+
+<div class="calculator">
+    <div class="display">
+        <div class="history" id="history"></div>
+        <div class="current" id="current">0</div>
+    </div>
+    <div class="buttons">
+        <!-- 첫 번째 줄 -->
+        <button class="btn-func" onclick="clearAll()">C</button>
+        <button class="btn-func" onclick="toggleSign()">+/-</button>
+        <button class="btn-func" onclick="percentage()">%</button>
+        <button class="btn-op" onclick="setOp('/')">÷</button>
+
+        <!-- 두 번째 줄 -->
+        <button class="btn-num" onclick="appendNum('7')">7</button>
+        <button class="btn-num" onclick="appendNum('8')">8</button>
+        <button class="btn-num" onclick="appendNum('9')">9</button>
+        <button class="btn-op" onclick="setOp('*')">×</button>
+
+        <!-- 세 번째 줄 -->
+        <button class="btn-num" onclick="appendNum('4')">4</button>
+        <button class="btn-num" onclick="appendNum('5')">5</button>
+        <button class="btn-num" onclick="appendNum('6')">6</button>
+        <button class="btn-op" onclick="setOp('-')">−</button>
+
+        <!-- 네 번째 줄 -->
+        <button class="btn-num" onclick="appendNum('1')">1</button>
+        <button class="btn-num" onclick="appendNum('2')">2</button>
+        <button class="btn-num" onclick="appendNum('3')">3</button>
+        <button class="btn-op" onclick="setOp('+')">+</button>
+
+        <!-- 다섯 번째 줄 -->
+        <button class="btn-num btn-zero" onclick="appendNum('0')">0</button>
+        <button class="btn-num" onclick="appendDot()">.</button>
+        <button class="btn-num" onclick="backspace()">⌫</button>
+        <button class="btn-op" onclick="calculate()">=</button>
+    </div>
+</div>
+
+<script>
+    let currentInput = '0';
+    let previousInput = '';
+    let operator = null;
+    let shouldResetScreen = false;
+
+    const currentDisplay = document.getElementById('current');
+    const historyDisplay = document.getElementById('history');
+
+    // 디스플레이 업데이트
+    function updateDisplay() {
+        // 숫자가 너무 길어지면 폰트 크기 조절
+        if (currentInput.length > 8) {
+            currentDisplay.style.fontSize = '2.5rem';
+        } else {
+            currentDisplay.style.fontSize = '3.5rem';
+        }
+        currentDisplay.innerText = currentInput;
+    }
+
+    // 숫자 입력
+    function appendNum(num) {
+        if (currentInput === '0' || shouldResetScreen) {
+            currentInput = num;
+            shouldResetScreen = false;
+        } else {
+            if (currentInput.length < 12) currentInput += num;
+        }
+        updateDisplay();
+    }
+
+    // 소수점 입력
+    function appendDot() {
+        if (shouldResetScreen) {
+            currentInput = '0.';
+            shouldResetScreen = false;
+        }
+        if (!currentInput.includes('.')) {
+            currentInput += '.';
+        }
+        updateDisplay();
+    }
+
+    // 연산자 설정
+    function setOp(op) {
+        if (operator !== null) calculate();
+        previousInput = currentInput;
+        operator = op;
+        historyDisplay.innerText = `${previousInput} ${op}`;
+        shouldResetScreen = true;
+    }
+
+    // 계산 실행
+    function calculate() {
+        if (operator === null || shouldResetScreen) return;
+        
+        let result;
+        const prev = parseFloat(previousInput);
+        const current = parseFloat(currentInput);
+
+        switch (operator) {
+            case '+': result = prev + current; break;
+            case '-': result = prev - current; break;
+            case '*': result = prev * current; break;
+            case '/': 
+                if (current === 0) {
+                    alert("0으로 나눌 수 없습니다.");
+                    clearAll();
+                    return;
+                }
+                result = prev / current; 
+                break;
+            default: return;
+        }
+
+        currentInput = parseFloat(result.toFixed(8)).toString(); // 소수점 오차 방지
+        historyDisplay.innerText = '';
+        operator = null;
+        shouldResetScreen = true;
+        updateDisplay();
+    }
+
+    // 초기화
+    function clearAll() {
+        currentInput = '0';
+        previousInput = '';
+        operator = null;
+        historyDisplay.innerText = '';
+        updateDisplay();
+    }
+
+    // 백스페이스
+    function backspace() {
+        if (currentInput.length > 1) {
+            currentInput = currentInput.slice(0, -1);
+        } else {
+            currentInput = '0';
+        }
+        updateDisplay();
+    }
+
+    // 백분율
+    function percentage() {
+        currentInput = (parseFloat(currentInput) / 100).toString();
+        updateDisplay();
+    }
+
+    // 부호 전환
+    function toggleSign() {
+        currentInput = (parseFloat(currentInput) * -1).toString();
+        updateDisplay();
+    }
+
+    // 키보드 지원
+    window.addEventListener('keydown', (e) => {
+        if (e.key >= '0' && e.key <= '9') appendNum(e.key);
+        if (e.key === '.') appendDot();
+        if (e.key === 'Enter' || e.key === '=') calculate();
+        if (e.key === 'Escape') clearAll();
+        if (e.key === 'Backspace') backspace();
+        if (e.key === '+') setOp('+');
+        if (e.key === '-') setOp('-');
+        if (e.key === '*') setOp('*');
+        if (e.key === '/') setOp('/');
+        if (e.key === '%') percentage();
+        
+        // 애니메이션 시각화를 위해 해당 버튼에 효과를 주고 싶다면 추가 로직이 필요
+    });
+</script>
+
+</body>
+</html>
