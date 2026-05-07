@@ -16,7 +16,7 @@
         body {
             background-color: var(--bg-color);
             color: var(--text-color);
-            font-family: 'Gowun Batang', serif; /* 전체적으로 빈티지한 한국어 서체 적용 */
+            font-family: 'Gowun Batang', serif;
             margin: 0;
             display: flex;
             flex-direction: column;
@@ -25,7 +25,6 @@
             line-height: 1.8;
         }
 
-        /* 헤더 스타일 */
         header {
             margin: 60px 0;
             text-align: center;
@@ -42,7 +41,6 @@
             margin-bottom: 10px;
         }
 
-        /* 국기 선택 버튼 */
         .flag-menu {
             display: flex;
             gap: 40px;
@@ -67,7 +65,6 @@
             border: 4px solid #fff;
         }
 
-        /* 상세 정보 컨테이너 (빨려들어가는 효과 적용 대상) */
         #content-area {
             width: 80%;
             max-width: 850px;
@@ -77,18 +74,28 @@
             background: rgba(255, 255, 255, 0.3);
             border: 1px solid rgba(0,0,0,0.05);
             position: relative;
-            display: none; /* 초기 상태 */
+            display: none;
         }
 
-        /* 빨려 들어가는 듯한 애니메이션 정의 */
+        /* 추가된 이미지 스타일 */
+        .country-image {
+            width: 100%;
+            max-height: 400px;
+            object-fit: cover;
+            margin-bottom: 30px;
+            border: 10px solid #fff;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            border-radius: 2px;
+        }
+
         @keyframes suckInEffect {
             0% {
-                transform: scale(0.5); /* 작게 시작 */
+                transform: scale(0.5);
                 opacity: 0;
                 filter: blur(10px);
             }
             100% {
-                transform: scale(1); /* 원래 크기로 */
+                transform: scale(1);
                 opacity: 1;
                 filter: blur(0);
             }
@@ -99,7 +106,6 @@
             animation: suckInEffect 0.8s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
         }
 
-        /* 국가 상세 설명 스타일 */
         .country-title {
             font-size: 2.5rem;
             color: var(--accent-color);
@@ -124,7 +130,7 @@
             text-align: justify;
             color: #444;
             margin-top: 10px;
-            white-space: pre-line; /* 줄바꿈 유지 */
+            white-space: pre-line;
         }
     </style>
 </head>
@@ -142,14 +148,14 @@
         <div class="flag-item" onclick="showCountry('newyork')"><img src="https://flagcdn.com/us.svg" alt="USA"></div>
     </div>
 
-    <div id="content-area">
-        <!-- 자바스크립트로 정보가 들어오는 곳 -->
-    </div>
+    <div id="content-area"></div>
 
     <script>
         const countryInfo = {
             hungary: {
                 title: "다뉴브의 진주, 헝가리",
+                // 파일 이름에 공백이 있으므로 정확히 입력하거나 아래처럼 작성합니다.
+                image: "hungary (1).jpg", 
                 intro: "동유럽의 심장부인 헝가리는 수천 년의 역사와 찬란한 마자르 문화가 살아 숨 쉬는 곳입니다. 특히 밤이 되면 황금빛으로 물드는 부다페스트의 전경은 세상에서 가장 아름다운 야경 중 하나로 손꼽힙니다.",
                 places: "• 부다페스트 국회의사당: 다뉴브 강변에 우뚝 솟은 네오고딕 양식의 걸작으로, 헝가리 주권의 상징입니다.\n• 세체니 온천: 유럽 최대 규모의 온천 중 하나로, 노란 고전 양식 건물 안에서 즐기는 온천욕은 여행의 피로를 씻어줍니다.\n• 어부의 요새: 부다 성 지구에 위치한 이곳은 마치 동화 속 성곽 같은 모습을 하고 있으며 시내를 한눈에 조망하기 가장 좋습니다.",
                 food: "• 굴라쉬(Goulash): 고기와 채소, 파프리카 가루를 듬뿍 넣어 끓인 헝가리식 전통 스튜로 매콤하고 진한 맛이 일품입니다.\n• 토카이 와인: '왕의 와인, 와인의 왕'이라 불리는 세계적인 디저트 와인으로 달콤한 풍미가 특징입니다."
@@ -170,7 +176,7 @@
                 title: "세계의 교차로, 뉴욕",
                 intro: "미국을 넘어 세계 경제와 문화의 중심지인 뉴욕은 끊임없이 변화하며 활력을 뿜어내는 도시입니다. 마천루 숲 사이로 흐르는 예술적 영감과 세련된 도시미를 동시에 느낄 수 있습니다.",
                 places: "• 타임스퀘어: 화려한 전광판과 인파로 잠들지 않는 도시 뉴욕의 상징과도 같은 곳입니다.\n• 센트럴 파크: 빌딩 숲 한가운데 위치한 거대한 녹지로, 뉴요커들의 여유로운 일상을 엿볼 수 있습니다.\n• 자유의 여신상: 미국의 자유와 민주주의를 상징하는 랜드마크로 리버티 아일랜드에 위치해 있습니다.",
-                food: "• 뉴욕 스타일 피자: 얇고 넓은 도우를 반으로 접어 먹는 것이 특징인 뉴욕의 소울 푸드입니다.\n• 매그놀리아 컵케이크: 드라마 '섹스 앤 더 시티'로 유명해진 달콤하고 화려한 컵케이크입니다."
+                food: "• 뉴욕 스타일 피자: 얇게 두드린 송아지 고기를 튀겨낸 오스트리아식 커틀릿입니다.\n• 매그놀리아 컵케이크: 드라마 '섹스 앤 더 시티'로 유명해진 달콤하고 화려한 컵케이크입니다."
             }
         };
 
@@ -178,12 +184,14 @@
             const area = document.getElementById('content-area');
             const data = countryInfo[id];
 
-            // 이전 애니메이션 제거를 위해 클래스 초기화
             area.classList.remove('animate-in');
             
-            // 브라우저가 변화를 감지하도록 짧은 지연 후 다시 애니메이션 적용
             setTimeout(() => {
+                // 이미지가 있는 경우에만 img 태그를 생성합니다.
+                const imgHtml = data.image ? `<img src="${data.image}" class="country-image" alt="${data.title}">` : '';
+
                 area.innerHTML = `
+                    ${imgHtml}
                     <div class="country-title">${data.title}</div>
                     <p class="description-text" style="font-weight: bold;">${data.intro}</p>
                     
