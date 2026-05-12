@@ -1,277 +1,260 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vintage Travel Archives</title>
-    <!-- 빈티지한 서체 (고운 바탕 & Playfair Display) -->
-    <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-color: #f2e8d5;
-            --text-color: #3e2f24;
-            --accent-color: #7d4a25;
-        }
+<!-- 유튜브 배경음악 -->
+<iframe
+    id="youtube-player"
+    width="0"
+    height="0"
+    src="https://www.youtube.com/embed/iBeKujv18OI?autoplay=1&loop=1&playlist=iBeKujv18OI"
+    frameborder="0"
+    allow="autoplay"
+    allowfullscreen>
+</iframe>
 
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            font-family: 'Gowun Batang', serif;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            background-image: url('https://www.transparenttextures.com/patterns/parchment.png');
-            line-height: 1.8;
-        }
+<style>
+#map {
+    width: 100%;
+    height: 400px;
+    margin-top: 25px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+    border: 5px solid white;
+}
+</style>
 
-        header {
-            margin: 60px 0;
-            text-align: center;
-        }
+<script>
 
-        .title {
-            font-family: 'Playfair Display', serif;
-            font-size: 5rem;
-            font-style: italic;
-            letter-spacing: 12px;
-            text-transform: uppercase;
-            border-bottom: 2px solid var(--accent-color);
-            display: inline-block;
-            margin-bottom: 10px;
-        }
+let map;
 
-        .flag-menu {
-            display: flex;
-            gap: 40px;
-            margin-bottom: 50px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
+const countryInfo = {
 
-        .flag-item {
-            cursor: pointer;
-            width: 100px;
-            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            filter: grayscale(40%) sepia(20%);
-        }
+    hungary: {
+        title: "다뉴브의 진주, 헝가리",
 
-        .flag-item:hover {
-            transform: translateY(-10px) scale(1.1);
-            filter: grayscale(0%);
-        }
+        lat: 47.4979,
+        lng: 19.0402,
+        zoom: 6,
 
-        .flag-item img {
-            width: 100%;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
-            border: 4px solid #fff;
-        }
+        intro: "동유럽의 심장부인 헝가리는 수천 년의 역사와 찬란한 마자르 문화가 살아 숨 쉬는 곳입니다. 특히 밤이 되면 황금빛으로 물드는 부다페스트의 전경은 세상에서 가장 아름다운 야경 중 하나로 손꼽힙니다.",
 
-        #content-area {
-            width: 85%;
-            max-width: 900px;
-            min-height: 400px;
-            margin-bottom: 100px;
-            padding: 50px;
-            background: rgba(255, 255, 255, 0.4);
-            border: 1px solid rgba(0,0,0,0.05);
-            position: relative;
-            display: none;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.05);
-        }
+        places:
+        "• 부다페스트 국회의사당\n• 세체니 온천\n• 어부의 요새",
 
-        @keyframes suckInEffect {
-            0% { transform: scale(0.8); opacity: 0; filter: blur(10px); }
-            100% { transform: scale(1); opacity: 1; filter: blur(0); }
-        }
+        food:
+        "• 굴라쉬(Goulash)\n• 토카이 와인",
 
-        .animate-in {
-            display: block !important;
-            animation: suckInEffect 0.6s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
-        }
+        imgPrefix: "hungary",
+        imgCount: 5
+    },
 
-        .country-title {
-            font-size: 2.5rem;
-            color: var(--accent-color);
-            text-align: center;
-            margin-bottom: 30px;
-            border-bottom: 1px dashed var(--accent-color);
-            padding-bottom: 10px;
-        }
+    czech: {
+        title: "중세의 낭만, 체코",
 
-        .section-label {
-            font-weight: bold;
-            font-size: 1.2rem;
-            color: #5d4037;
-            margin-top: 35px;
-            display: block;
-            border-left: 4px solid var(--accent-color);
-            padding-left: 15px;
-            margin-bottom: 10px;
-        }
+        lat: 50.0755,
+        lng: 14.4378,
+        zoom: 6,
 
-        .description-text {
-            font-size: 1.1rem;
-            text-align: justify;
-            color: #444;
-            white-space: pre-line;
-            margin-bottom: 20px;
-        }
+        intro: "붉은 지붕과 돌담길이 가득한 체코는 마치 시간이 멈춘 듯한 중세의 분위기를 간직하고 있습니다.",
 
-        /* 갤러리 스타일 */
-        .photo-gallery {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 15px;
-            margin-top: 20px;
-        }
+        places:
+        "• 프라하 성\n• 카를교\n• 구시가지 광장",
 
-        .gallery-item {
-            width: 100%;
-            height: 150px;
-            object-fit: cover;
-            cursor: pointer;
-            border: 5px solid #fff;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease;
-        }
+        food:
+        "• 꼴레뇨\n• 체코 맥주\n• 뜨르들로",
 
-        .gallery-item:hover {
-            transform: scale(1.05) rotate(2deg);
-            z-index: 10;
-        }
+        imgPrefix: "체코",
+        imgCount: 6
+    },
 
-        /* 라이트박스(모달) 스타일 */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 9999;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background-color: rgba(0,0,0,0.9);
-            cursor: zoom-out;
-            justify-content: center;
-            align-items: center;
-        }
+    austria: {
+        title: "예술과 음악의 나라, 오스트리아",
 
-        .modal-content {
-            max-width: 90%;
-            max-height: 90%;
-            border: 10px solid white;
-            box-shadow: 0 0 30px rgba(0,0,0,0.5);
-            animation: zoomIn 0.3s ease;
-        }
+        lat: 48.2082,
+        lng: 16.3738,
+        zoom: 6,
 
-        @keyframes zoomIn {
-            from { transform: scale(0.7); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
-    </style>
-</head>
-<body>
+        intro: "모차르트와 베토벤의 선율이 흐르는 오스트리아는 알프스의 웅장한 대자연과 화려한 합스부르크 왕가의 역사가 공존하는 곳입니다.",
 
-    <header>
-        <div class="title">Travel</div>
-        <p style="font-style: italic; color: #888;">Discover the timeless beauty of the world</p>
-    </header>
+        places:
+        "• 할슈타트\n• 쇤브룬 궁전\n• 벨베데레 궁전",
 
-    <div class="flag-menu">
-        <div class="flag-item" onclick="showCountry('hungary')"><img src="https://flagcdn.com/hu.svg" alt="Hungary"></div>
-        <div class="flag-item" onclick="showCountry('czech')"><img src="https://flagcdn.com/cz.svg" alt="Czech Republic"></div>
-        <div class="flag-item" onclick="showCountry('austria')"><img src="https://flagcdn.com/at.svg" alt="Austria"></div>
-        <div class="flag-item" onclick="showCountry('newyork')"><img src="https://flagcdn.com/us.svg" alt="USA"></div>
-    </div>
+        food:
+        "• 비너 슈니첼\n• 자허 토르테",
 
-    <div id="content-area">
-        <!-- 정보와 사진이 들어오는 곳 -->
-    </div>
+        imgPrefix: "오스트리아",
+        imgCount: 9
+    },
 
-    <!-- 사진 확대를 위한 모달 창 -->
-    <div id="photoModal" class="modal" onclick="closeModal()">
-        <img class="modal-content" id="modalImg">
-    </div>
+    newyork: {
+        title: "세계의 교차로, 뉴욕 (미국)",
 
-    <script>
-        const countryInfo = {
-            hungary: {
-                title: "다뉴브의 진주, 헝가리",
-                intro: "동유럽의 심장부인 헝가리는 수천 년의 역사와 찬란한 마자르 문화가 살아 숨 쉬는 곳입니다. 특히 밤이 되면 황금빛으로 물드는 부다페스트의 전경은 세상에서 가장 아름다운 야경 중 하나로 손꼽힙니다.",
-                places: "• 부다페스트 국회의사당: 다뉴브 강변에 우뚝 솟은 네오고딕 양식의 걸작으로, 헝가리 주권의 상징입니다.\n• 세체니 온천: 유럽 최대 규모의 온천 중 하나로, 노란 고전 양식 건물 안에서 즐기는 온천욕은 여행의 피로를 씻어줍니다.\n• 어부의 요새: 부다 성 지구에 위치한 이곳은 마치 동화 속 성곽 같은 모습을 하고 있으며 시내를 한눈에 조망하기 가장 좋습니다.",
-                food: "• 굴라쉬(Goulash): 고기와 채소, 파프리카 가루를 듬뿍 넣어 끓인 헝가리식 전통 스튜로 매콤하고 진한 맛이 일품입니다.\n• 토카이 와인: '왕의 와인, 와인의 왕'이라 불리는 세계적인 디저트 와인으로 달콤한 풍미가 특징입니다.",
-                imgPrefix: "hungary",
-                imgCount: 5
-            },
-            czech: {
-                title: "중세의 낭만, 체코",
-                intro: "붉은 지붕과 돌담길이 가득한 체코는 마치 시간이 멈춘 듯한 중세의 분위기를 간직하고 있습니다. 프라하의 구시가지는 도시 전체가 유네스코 세계문화유산으로 지정될 만큼 역사적 가치가 높습니다.",
-                places: "• 프라하 성: 9세기부터 지어지기 시작한 거대한 성채로, 성 비투스 대성당의 웅장함에 압도됩니다.\n• 카를교: 다뉴브 강 위를 가로지르는 가장 오래된 다리로, 거리의 예술가들과 조각상들이 낭만적인 분위기를 자아냅니다.\n• 구시가지 광장: 천문시계탑의 정시 타종을 보기 위해 전 세계 사람들이 모여드는 활기찬 장소입니다.",
-                food: "• 꼴레뇨: 체코식 족발 요리로 겉은 바삭하고 속은 촉촉한 식감이 일품입니다.\n• 체코 맥주: 필스너의 본고장답게 저렴하고 풍미 깊은 맥주를 어디서나 즐길 수 있습니다.\n• 뜨르들로(굴뚝빵): 시나몬과 설탕을 뿌려 구운 달콤한 간식입니다.",
-                imgPrefix: "체코",
-                imgCount: 6
-            },
-            austria: {
-                title: "예술과 음악의 나라, 오스트리아",
-                intro: "모차르트와 베토벤의 선율이 흐르는 오스트리아는 알프스의 웅장한 대자연과 화려한 합스부르크 왕가의 역사가 공존하는 곳입니다. 우아한 카페 문화와 클래식 공연은 여행자의 감성을 자극합니다.",
-                places: "• 할슈타트: 알프스 산맥과 호수가 어우러진 세계에서 가장 아름다운 호수마을로 불립니다.\n• 쇤브룬 궁전: 합스부르크 왕가의 여름 궁전으로, 화려한 내부와 끝없이 펼쳐진 정원이 장관입니다.\n• 벨베데레 궁전: 구스타프 클림트의 '키스'를 감상할 수 있는 미술관으로도 유명합니다.",
-                food: "• 비너 슈니첼: 얇게 두드린 송아지 고기를 튀겨낸 오스트리아식 커틀릿입니다.\n• 자허 토르테: 초콜릿 스펀지 케이크 사이에 살구 잼을 넣은 빈의 전통 초콜릿 케이크입니다.",
-                imgPrefix: "오스트리아",
-                imgCount: 9
-            },
-            newyork: {
-                title: "세계의 교차로, 뉴욕 (미국)",
-                intro: "미국을 넘어 세계 경제와 문화의 중심지인 뉴욕은 끊임없이 변화하며 활력을 뿜어내는 도시입니다. 마천루 숲 사이로 흐르는 예술적 영감과 세련된 도시미를 동시에 느낄 수 있습니다.",
-                places: "• 타임스퀘어: 화려한 전광판과 인파로 잠들지 않는 도시 뉴욕의 상징과도 같은 곳입니다.\n• 센트럴 파크: 빌딩 숲 한가운데 위치한 거대한 녹지로, 뉴요커들의 여유로운 일상을 엿볼 수 있습니다.\n• 자유의 여신상: 미국의 자유와 민주주의를 상징하는 랜드마크로 리버티 아일랜드에 위치해 있습니다.",
-                food: "• 뉴욕 스타일 피자: 얇고 넓은 도우를 반으로 접어 먹는 것이 특징인 뉴욕의 소울 푸드입니다.\n• 매그놀리아 컵케이크: 드라마 '섹스 앤 더 시티'로 유명해진 달콤하고 화려한 컵케이크입니다.",
-                imgPrefix: "뉴욕",
-                imgCount: 7
-            }
-        };
+        lat: 40.7128,
+        lng: -74.0060,
+        zoom: 10,
 
-        function showCountry(id) {
-            const area = document.getElementById('content-area');
-            const data = countryInfo[id];
+        intro: "미국을 넘어 세계 경제와 문화의 중심지인 뉴욕은 끊임없이 변화하며 활력을 뿜어내는 도시입니다.",
 
-            area.classList.remove('animate-in');
-            
-            setTimeout(() => {
-                // 사진 갤러리 HTML 생성
-                let galleryHtml = '<div class="photo-gallery">';
-                for (let i = 1; i <= data.imgCount; i++) {
-                    const imgName = `${data.imgPrefix} (${i}).jpg`;
-                    galleryHtml += `<img src="${imgName}" class="gallery-item" alt="${data.imgPrefix} ${i}" onclick="openModal('${imgName}')">`;
+        places:
+        "• 타임스퀘어\n• 센트럴 파크\n• 자유의 여신상",
+
+        food:
+        "• 뉴욕 스타일 피자\n• 매그놀리아 컵케이크",
+
+        imgPrefix: "뉴욕",
+        imgCount: 7
+    }
+};
+
+// 지도 생성
+function initMap(lat, lng, zoom, title) {
+
+    const location = {
+        lat: lat,
+        lng: lng
+    };
+
+    map = new google.maps.Map(
+        document.getElementById("map"),
+        {
+            center: location,
+            zoom: zoom,
+
+            styles: [
+                {
+                    elementType: "geometry",
+                    stylers: [{ color: "#ebe3cd" }]
+                },
+                {
+                    elementType: "labels.text.fill",
+                    stylers: [{ color: "#523735" }]
+                },
+                {
+                    elementType: "labels.text.stroke",
+                    stylers: [{ color: "#f5f1e6" }]
                 }
-                galleryHtml += '</div>';
+            ]
+        }
+    );
 
-                area.innerHTML = `
-                    <div class="country-title">${data.title}</div>
-                    <p class="description-text" style="font-weight: bold;">${data.intro}</p>
-                    
-                    <span class="section-label">📸 여행의 기록</span>
-                    ${galleryHtml}
+    new google.maps.Marker({
+        position: location,
+        map: map,
+        title: title,
+        animation: google.maps.Animation.DROP
+    });
+}
 
-                    <span class="section-label">🏛 가봐야 할 명소</span>
-                    <p class="description-text">${data.places}</p>
-                    
-                    <span class="section-label">🍴 꼭 먹어봐야 할 음식</span>
-                    <p class="description-text">${data.food}</p>
-                `;
-                area.classList.add('animate-in');
-                area.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }, 50);
+// 나라 클릭
+function showCountry(id) {
+
+    const area =
+    document.getElementById('content-area');
+
+    const data =
+    countryInfo[id];
+
+    area.classList.remove('animate-in');
+
+    setTimeout(() => {
+
+        let galleryHtml =
+        '<div class="photo-gallery">';
+
+        for (let i = 1; i <= data.imgCount; i++) {
+
+            const imgName =
+            `${data.imgPrefix} (${i}).jpg`;
+
+            galleryHtml += `
+                <img
+                    src="${imgName}"
+                    class="gallery-item"
+                    alt="${data.imgPrefix} ${i}"
+                    onclick="openModal('${imgName}')"
+                >
+            `;
         }
 
-        // 라이트박스 열기
-        function openModal(src) {
-            const modal = document.getElementById('photoModal');
-            const modalImg = document.getElementById('modalImg');
-            modal.style.display = "flex";
-            modalImg.src = src;
-        }
+        galleryHtml += '</div>';
 
-        // 라이트박스 닫기
-        function closeModal() {
-            document.getElementById('photoModal').style.display = "none";
-        }
-    </script>
-</body>
-</html>
+        area.innerHTML = `
+
+            <div class="country-title">
+                ${data.title}
+            </div>
+
+            <p class="description-text"
+               style="font-weight:bold;">
+               ${data.intro}
+            </p>
+
+            <!-- 지도 -->
+            <div id="map"></div>
+
+            <span class="section-label">
+                📸 여행의 기록
+            </span>
+
+            ${galleryHtml}
+
+            <span class="section-label">
+                🏛 가봐야 할 명소
+            </span>
+
+            <p class="description-text">
+                ${data.places}
+            </p>
+
+            <span class="section-label">
+                🍴 꼭 먹어봐야 할 음식
+            </span>
+
+            <p class="description-text">
+                ${data.food}
+            </p>
+        `;
+
+        area.classList.add('animate-in');
+
+        // 지도 실행
+        initMap(
+            data.lat,
+            data.lng,
+            data.zoom,
+            data.title
+        );
+
+        area.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+        });
+
+    }, 50);
+}
+
+// 라이트박스 열기
+function openModal(src) {
+
+    const modal =
+    document.getElementById('photoModal');
+
+    const modalImg =
+    document.getElementById('modalImg');
+
+    modal.style.display = "flex";
+
+    modalImg.src = src;
+}
+
+// 라이트박스 닫기
+function closeModal() {
+
+    document.getElementById('photoModal')
+    .style.display = "none";
+}
+
+</script>
+
+<!-- Google Maps API -->
+<script async
+src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBPXqw-GBwqJiNjO-8MtJymPeNzCR_T7pA">
+</script>
